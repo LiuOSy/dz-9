@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.exception.*;
+
 abstract public class Person {
     private String firstName;
     private String lastName;
@@ -22,7 +24,9 @@ abstract public class Person {
         return firstName;
     }
 
-    public void setFirstName(String firstName){
+    public void setFirstName(String firstName) throws Exception {
+        if (firstName == null)
+            throw new NullFirstNameException();
         this.firstName = firstName;
     }
 
@@ -30,7 +34,9 @@ abstract public class Person {
          return lastName;
     }
 
-    public void setLastName(String lastName){
+    public void setLastName(String lastName) throws Exception {
+        if (lastName == null)
+                throw new NullLastNameException();
         this.lastName = lastName;
     }
 
@@ -58,11 +64,16 @@ abstract public class Person {
     abstract public boolean isRetired();
 
     public static void registerMarriage(Person spouse1, Person spouse2) throws Exception {
-        if (spouse1.isMarried() || spouse2.isMarried()
-                || spouse1.getAge() < 18 || spouse2.getAge() < 18
-                || spouse1.getClass() == spouse2.getClass()
-                || spouse1 == spouse2)
-            throw new Exception("Marriage cannot be registered!");
+        if (spouse1 == null || spouse2 == null)
+            throw new NullSpouseException("Marriage cannot be processed! Less than two people are given.");
+        if (spouse1.isMarried() || spouse2.isMarried())
+            throw new MarriageCannotBeRegisteredInvalidStatusException("Marriage cannot be registered! One or both people are already married!");
+        if (spouse1.getAge() < 18 || spouse2.getAge() < 18)
+            throw new MarriageCannotBeRegisteredAgeException("Marriage cannot be registered! One or both partners are too young!");
+        if (spouse1.getClass() == spouse2.getClass())
+            throw new MarriageCannotBeRegisteredGenderException("Marriage cannot be registered! Partners have the same gender!");
+        if (spouse1 == spouse2)
+            throw new MarriageCannotBeRegisteredSelfMarriageException("Marriage cannot be registered! Self marriage is not allowed!");
 
         spouse1.setSpouse(spouse2);
         spouse2.setSpouse(spouse1);
@@ -71,11 +82,13 @@ abstract public class Person {
 
     }
 
-    abstract protected void marriagePostProcessing(Person spouse);
+    abstract protected void marriagePostProcessing(Person spouse) throws Exception;
 
     public static void registerDivorce(Person spouse1, Person spouse2, boolean returnOriginalLastName) throws Exception {
+        if (spouse1 == null || spouse2 == null)
+            throw new NullSpouseException("Divorce cannot be processed! Less than two people are given.");
         if (spouse1.getSpouse() != spouse2 || spouse2.getSpouse() != spouse1)
-            throw new Exception("Divorce cannot be processed!");
+            throw new DivorceCannotBeProcessedException("Divorce cannot be processed!");
         spouse1.setSpouse(null);
         spouse2.setSpouse(null);
         if (returnOriginalLastName) {
@@ -84,12 +97,11 @@ abstract public class Person {
         }
     }
     
-    abstract protected void divorcePostProcessing(Person spouse);
+    abstract protected void divorcePostProcessing(Person spouse) throws Exception;
 
     private void validateAge(int age) throws Exception {
         if (age < 0 || age > 150)
-            throw new Exception(
-                    String.format("Age should be between 0 and 150. Age entered is %d", age));
+            throw new IncorrectAgeValueException(String.format("Age should be between 0 and 150. Age entered is %d", age));
     }
 
     @Override

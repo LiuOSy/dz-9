@@ -18,13 +18,13 @@ public class Woman extends Person {
     }
 
     @Override
-    protected void marriagePostProcessing(Person spouse) {
+    protected void marriagePostProcessing(Person spouse) throws Exception {
         originalLastName = getLastName();
         setLastName(spouse.getLastName());
     }
 
     @Override
-    protected void divorcePostProcessing(Person spouse) {
+    protected void divorcePostProcessing(Person spouse) throws Exception {
         setLastName(originalLastName);
     }
 
