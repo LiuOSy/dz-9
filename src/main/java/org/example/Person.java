@@ -9,8 +9,8 @@ abstract public class Person {
     private Person spouse = null;
 
     public Person(String firstName, String lastName, int age) throws Exception {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        setFirstName(firstName);
+        setLastName(lastName);
         validateAge(age);
         this.age = age;
     }
@@ -70,10 +70,10 @@ abstract public class Person {
             throw new MarriageCannotBeRegisteredInvalidStatusException("Marriage cannot be registered! One or both people are already married!");
         if (spouse1.getAge() < 18 || spouse2.getAge() < 18)
             throw new MarriageCannotBeRegisteredAgeException("Marriage cannot be registered! One or both partners are too young!");
-        if (spouse1.getClass() == spouse2.getClass())
-            throw new MarriageCannotBeRegisteredGenderException("Marriage cannot be registered! Partners have the same gender!");
         if (spouse1 == spouse2)
             throw new MarriageCannotBeRegisteredSelfMarriageException("Marriage cannot be registered! Self marriage is not allowed!");
+        if (spouse1.getClass() == spouse2.getClass())
+            throw new MarriageCannotBeRegisteredGenderException("Marriage cannot be registered! Partners have the same gender!");
 
         spouse1.setSpouse(spouse2);
         spouse2.setSpouse(spouse1);
