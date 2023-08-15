@@ -2,7 +2,7 @@ package org.example;
 
 public class Woman extends Person {
 
-    private String originalLastName = null;
+    protected String originalLastName = null;
 
     public Woman(String firstName, String lastName, int age) throws Exception {
         super(firstName, lastName, age);
